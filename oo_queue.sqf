@@ -1,6 +1,6 @@
 	/*
 	Author: code34 nicolas_boiteux@yahoo.fr
-	Copyright (C) 2014-2016 Nicolas BOITEUX
+	Copyright (C) 2016 Nicolas BOITEUX
 
 	CLASS OO_QUEUE
 	
@@ -28,14 +28,33 @@
 		};
 
 		/*
-		Get queue
+		Return an array containing all the elements of the queue
+		Return : array
 		*/
-		PUBLIC FUNCTION("", "getQueue") {
+		PUBLIC FUNCTION("", "toArray") {
 			MEMBER("queue", nil);
 		};
 
 		/*
-		Clear the queue
+		Count the number of elements in the Queue
+		Return : scalar
+		*/
+		PUBLIC FUNCTION("", "count") {
+			private ["_count"];
+
+			_count = 0;
+			{
+				if!(isnil "_x") then {
+					_count = _count + count(_x);
+				};
+				sleep 0.0001;
+			} foreach MEMBER("queue", nil);
+			_count;
+		};
+
+		/*
+		Removes all of the elements from this priority queue
+		Return : nothing
 		*/
 		PUBLIC FUNCTION("", "clearQueue") {
 			_array = [];
@@ -43,13 +62,22 @@
 		};
 
 		/*
-		Get priority element in the queue
-		Return default return value
+		Test if the priority queue is empty 
+		Return : boolean 
 		*/
-		PUBLIC FUNCTION("ANY", "getNextPrior") {
+		PUBLIC FUNCTION("", "isEmpty") {
+			if(MEMBER("count", nil) > 0) then { false; } else { true;};
+		};
+
+		/*
+		Get next first in element according its priority, and remove it
+		Param : default return value, if queue is empty
+		Return : default return value
+		*/
+		PUBLIC FUNCTION("ANY", "get") {
 			private ["_index", "_result", "_defaultreturn", "_array"];
 			
-			if(isnil "_this") exitwith { hintc "OO_QUEUE: getNextPrior requires a return default value";};
+			if(isnil "_this") exitwith { diag_log "OO_QUEUE: getNextPrior requires a return default value";};
 			_defaultreturn = _this;
 
 			{
@@ -66,33 +94,19 @@
 				_result = _defaultreturn;
 			} else {
 				_array = [_index, _defaultreturn];
-				_result = MEMBER("get", _array);
+				_result = MEMBER("getInQueue", _array);
 			};
 			_result;
 		};
 
 		/*
-		Retrieve the number of elements in the Queue
+		Get the first in element, and remove it, according its priority
+		 params : array 
+		 	1- priority - (0 highest priority)
+		 	2 - default return
+		 Return : default return
 		*/
-		PUBLIC FUNCTION("", "count") {
-			private ["_count"];
-
-			_count = 0;
-			{
-				if!(isnil "_x") then {
-					_count = _count + count(_x);
-				};
-				sleep 0.0001;
-			} foreach MEMBER("queue", nil);
-			_count;
-		};
-
-		/*
-		Get the first element with priority prior in the queue
-		 params - array 
-		 1- priority queue
-		*/
-		PUBLIC FUNCTION("array","get") {
+		PRIVATE FUNCTION("array","getInQueue") {
 			private ["_array", "_queue", "_queueid", "_element", "_defaultreturn"];
 
 			_queueid = _this select 0;
@@ -110,16 +124,18 @@
 		};
 
 		/*
-		Add an element with priority in the right queue
-		 params - array 
-		 1- priority queue
-		 2 - element
+		Insert an element in priority queue according its priority
+		 params : array
+		 	1 - priority - (0 highest priority)
+		 	2 - Element to insert in the queue
 		*/
 		PUBLIC FUNCTION("array","put") {
 			private ["_queueid", "_element", "_queue"];
 			
 			_queueid = _this select 0;
 			_element = _this select 1;
+
+			if(typename _queueid != "SCALAR") exitwith {false;};
 
 			if (count MEMBER("queue", nil)  < _queueid) then {
 				_queue = [];
@@ -132,6 +148,7 @@
 			_queue = _queue + [_element];
 
 			MEMBER("queue", nil) set [_queueid, _queue];
+			true;
 		};
 
 		PUBLIC FUNCTION("","deconstructor") { 
