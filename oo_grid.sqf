@@ -69,9 +69,11 @@
 		};
 
 		PUBLIC FUNCTION("array", "DrawSector") {
-			private ["_index", "_gridmarker", "_marker", "_sector"];
+			private ["_index", "_gridmarker", "_marker", "_sector", "_text"];
 
-			_sector = _this;
+			_sector = _this  select 0;
+			_text = _this select 1;
+
 			_index = MEMBER("markerindex", nil);
 			_gridmarker = MEMBER("gridmarker", nil);
 
@@ -83,18 +85,9 @@
 			_marker setmarkerbrush "Solid";
 			_marker setmarkercolor "ColorBlack";
 			_marker setmarkersize [0.5,0.5];
-
-			_marker setmarkertext format["%1", _sector];
+			_marker setmarkertext format["%1", _text];
 			_gridmarker = _gridmarker + [_marker];
 		
-			_marker = createMarker [format["mrk_grid_%1", _index], _position];
-			_marker setMarkerShape "RECTANGLE";
-			_marker setMarkerType "mil_triangle";
-			_marker setmarkerbrush "Border";
-			_marker setmarkercolor "ColorBlack";
-			_marker setmarkersize [(MEMBER("xsector", nil)/2),(MEMBER("ysector", nil)/2)];
-			_gridmarker = _gridmarker + [_marker];
-
 			_index = _index + 1;
 			MEMBER("gridmarker", _gridmarker);
 			MEMBER("markerindex", _index);
