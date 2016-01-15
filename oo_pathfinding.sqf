@@ -69,8 +69,9 @@
 			["put", [0, _start]] call _frontier;
 			["put", [str(_start), _start]] call _hashmap;
 
-			while {"count" call _frontier > 0} do {
-				_current = ["getNextPrior", ""] call _frontier;
+
+			while {!("isEmpty" call _frontier)} do {
+				_current = ["get", ""] call _frontier;
 				_arounds = ["getSectorAround", _current] call _grid;
 				{
 					_position = ["getPosFromSector", _x] call _grid;
@@ -106,6 +107,7 @@
 			}foreach _path;
 
 			["delete", _hashmap] call OO_HASHMAP;
+			["delete", _frontier] call OO_QUEUE;
 
 			_path;
 		};		
@@ -129,8 +131,8 @@
 			["put", [str(_start), 0]] call _costsofar;
 			["put", [0, _start]] call _frontier;
 
-			while {"count" call _frontier > 0} do {
-				_current = ["getNextPrior", ""] call _frontier;
+			while {!("isEmpty" call _frontier)} do {
+				_current = ["get", ""] call _frontier;
 				_arounds = ["getSectorAround", _current] call _grid;
 				
 				{
@@ -173,7 +175,9 @@
 				["DrawSector2", _x] call _grid;
 			}foreach _path;
 			
+			["delete", _costsofar] call OO_HASHMAP;
 			["delete", _hashmap] call OO_HASHMAP;
+			["delete", _frontier] call OO_QUEUE;
 
 			_path;
 		};	
@@ -197,13 +201,13 @@
 			["put", [str(_start), 0]] call _costsofar;
 			["put", [0, _start]] call _frontier;
 
-			while {"count" call _frontier > 0} do {
-				_current = ["getNextPrior", ""] call _frontier;
+			while {!("isEmpty" call _frontier)} do {
+				_current = ["get", ""] call _frontier;
 				_arounds = ["getSectorAround", _current] call _grid;
 				
 				{
 					_position = ["getPosFromSector", _x] call _grid;
-					_list = _position nearRoads 50;
+					_list = _position nearRoads 55;
 					if(count _list > 0) then {
 						_size = MEMBER("sizeOfRoad", _list select 0);
 						if(_size > 400) then {
@@ -249,7 +253,9 @@
 				["DrawSector2", _x] call _grid;
 			}foreach _path;
 			
+			["delete", _costsofar] call OO_HASHMAP;
 			["delete", _hashmap] call OO_HASHMAP;
+			["delete", _frontier] call OO_QUEUE;
 
 			_path;
 		};
