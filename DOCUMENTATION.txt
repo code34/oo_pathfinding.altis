@@ -1,8 +1,8 @@
 	/*
 	Author: code34 nicolas_boiteux@yahoo.fr
-	Copyright (C) 2013-2016 Nicolas BOITEUX
+	Copyright (C) 2016 Nicolas BOITEUX
 
-	CLASS OO_PATHFINDING - pathfinding on Arma3
+	CLASS OO_PATHFIND - PATHFINDING CLASS
 	
 	This program is free software: you can redistribute it and/or modify
 	it under the terms of the GNU General Public License as published by
@@ -18,3 +18,44 @@
 	along with this program.  If not, see <http://www.gnu.org/licenses/>. 
 	*/
 
+	--------------------------------------------------------------------------------------------------------------
+
+	Function:  _path = ["new", _grid] call OO_PATHFINDING;
+	Create a new path object 
+	OO_PATHFINDING requiere several class: OO_GRID, OO_HASHMAP, OO_QUEUE
+		
+	Parameters:
+		code - grid object
+
+	--------------------------------------------------------------------------------------------------------------
+
+	Function: ["setWeightFunction", _yourweightfunction] call _path;
+	For : getPath_A algorythm, set the weight function wich will be call to evaluate the weight of each sectors
+	
+	Your function must return a scalar. 0 if you want to ignore the sector, 1 if your want a high priority, >1 for lowest priority
+		
+	Parameters:
+		code - yourweightfunction
+	
+	Return : nothing
+
+	--------------------------------------------------------------------------------------------------------------
+
+	Function: ["getPath_GreedyBestFirst", [_startpos, _endpos]] call _path;
+	Find a way of positions between start and end using the Greedybestfirst algorythm
+	
+	Return : array - positions
+
+	--------------------------------------------------------------------------------------------------------------
+
+	Function: ["getPath_Dijkstra", [_startpos, _endpos]] call _path;
+	Find a way of positions between start and end using the Dijkstra algorythm
+	
+	Return : array - positions
+
+	--------------------------------------------------------------------------------------------------------------
+
+	Function: ["getPath_A", [_startpos, _endpos]] call _path;
+	Find a way of positions between start and end using the A* algorythm
+	
+	Return : array - positions
