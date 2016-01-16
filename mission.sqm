@@ -44,7 +44,7 @@ class Mission
 				items=1;
 				class Item0
 				{
-					position[]={8941.6387,68.483162,11868.508};
+					position[]={10770.692,2.892411,10858.02};
 					id=0;
 					side="WEST";
 					vehicle="B_Soldier_F";
@@ -60,14 +60,16 @@ class Mission
 		items=2;
 		class Item0
 		{
-			position[]={21181.506,30.652521,17123.797};
+			position[]={16238.473,25.878059,17337.957};
 			name="END";
+			text="END";
 			type="mil_objective";
 		};
 		class Item1
 		{
 			position[]={4352.1963,251.72305,21146.52};
 			name="START";
+			text="START";
 			type="mil_objective";
 		};
 	};
