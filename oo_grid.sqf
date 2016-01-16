@@ -27,70 +27,18 @@
 		PRIVATE VARIABLE("scalar","ygridsize");
 		PRIVATE VARIABLE("scalar","xsectorsize");
 		PRIVATE VARIABLE("scalar","ysectorsize");
-		PRIVATE VARIABLE("scalar","markerindex");
-		PRIVATE VARIABLE("array","gridmarker");		
 
 		/*
 		Create a new grid object
 
 		Parameters:
-			xgrid - x grid pos
-			ygrid - y grid pos
-			xgridsize - grid width
-			ygridsize - grid height
-			xsectorsize - sector width
-			ysectorsize - sector height
+			xgrid - x grid pos - scalar
+			ygrid - y grid pos - scalar
+			xgridsize - grid width - scalar
+			ygridsize - grid height - scalar
+			xsectorsize - sector width - scalar
+			ysectorsize - sector height - scalar
 		*/
-
-		PUBLIC FUNCTION("array", "DrawSector") {
-			private ["_index", "_gridmarker", "_marker", "_sector", "_text"];
-
-			_sector = _this  select 0;
-			_text = _this select 1;
-
-			_index = MEMBER("markerindex", nil);
-			_gridmarker = MEMBER("gridmarker", nil);
-
-			_position = MEMBER("getPosFromSector", _sector);
-
-			_marker = createMarker [format["mrk_text_%1", _index], _position];
-			_marker setMarkerShape "ICON";
-			_marker setMarkerType "mil_triangle";
-			_marker setmarkerbrush "Solid";
-			_marker setmarkercolor "ColorBlack";
-			_marker setmarkersize [0.5,0.5];
-			_marker setmarkertext format["%1", _text];
-			_gridmarker = _gridmarker + [_marker];
-		
-			_index = _index + 1;
-			MEMBER("gridmarker", _gridmarker);
-			MEMBER("markerindex", _index);
-		};	
-
-		PUBLIC FUNCTION("array", "DrawSector2") {
-			private ["_marker", "_xsize", "_ysize", "_sector", "_index", "_gridmarker", "_position"];
-
-			_sector = _this;
-			_index = MEMBER("markerindex", nil);
-			_gridmarker = MEMBER("gridmarker", nil);
-			_xsize = MEMBER("xsectorsize", nil);
-			_ysize = MEMBER("ysectorsize", nil);
-
-			_position = MEMBER("getPosFromSector", _sector);
-
-			_marker = createMarker [format["mrk_text_%1", _index], _position];
-			_marker setMarkerShape "RECTANGLE";
-			_marker setmarkerbrush "Solid";
-			_marker setmarkercolor "ColorRed";
-			_marker setmarkersize [_xsize/2,_ysize/2];
-
-			_gridmarker = _gridmarker + [_marker];
-
-			_index = _index + 1;
-			MEMBER("gridmarker", _gridmarker);
-			MEMBER("markerindex", _index);
-		};
-
 		PUBLIC FUNCTION("array","constructor") {
 			MEMBER("xgrid", _this select 0);
 			MEMBER("ygrid", _this select 1);
@@ -98,10 +46,6 @@
 			MEMBER("ygridsize", _this select 3);
 			MEMBER("xsectorsize", _this select 4);
 			MEMBER("ysectorsize", _this select 5);
-
-			_array = [];
-			MEMBER("markerindex", 0);
-			MEMBER("gridmarker", _array);	
 		};
 
 		PUBLIC FUNCTION("scalar","setXgrid") {
