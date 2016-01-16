@@ -3,11 +3,12 @@
 		call compilefinal preprocessFileLineNumbers "oo_hashmap.sqf";
 		call compilefinal preprocessFileLineNumbers "oo_pathfinding.sqf";
 
+
+		// Initialize a virtual grid over the map
 		_grid = ["new", [0,0,31000,31000,100,100]] call OO_GRID;
 		_path = ["new", _grid] call OO_PATHFINDING;
-		_start = getmarkerpos "start";
-		_end = getmarkerpos "end";
 
+		// Weight function example to evaluate each sector
 		_weightfunction = {
 			private ["_position", "_size", "_average", "_cost"];
 			
@@ -35,6 +36,8 @@
 
 		["setWeightFunction", _weightfunction] call _path;
 
+		_start = getmarkerpos "start";
+		_end = getmarkerpos "end";
 		_time1 = time;
 		_waypoints = ["getPath_A", [_start, _end]] call _path;
 		_time2 = time;
