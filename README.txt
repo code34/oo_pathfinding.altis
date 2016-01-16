@@ -1,8 +1,8 @@
 	/*
 	Author: code34 nicolas_boiteux@yahoo.fr
-	Copyright (C) 2014 Nicolas BOITEUX
+	Copyright (C) 2016 Nicolas BOITEUX
 
-	CLASS OO_GRID STRATEGIC GRID
+	CLASS OO_PATHFIND - PATHFINDING CLASS
 	
 	This program is free software: you can redistribute it and/or modify
 	it under the terms of the GNU General Public License as published by
@@ -18,12 +18,19 @@
 	along with this program.  If not, see <http://www.gnu.org/licenses/>. 
 	*/
 
-	Create a main bus message between clients & server
+	Retrieve the way before A and B point according the weightfunction
 	
 	Usage:
 		put the "oo_grid.sqf" and the "oop.h" files in your mission directory
+		put the "oo_hashmap.sqf" in your mission directory
+		put the "oo_pathfinding.sqf" in your mission directory
+		put the "oo_queue.sqf" in your mission directory
 		put this code into your mission init.sqf
+
 		call compilefinal preprocessFileLineNumbers "oo_grid.sqf";
+		call compilefinal preprocessFileLineNumbers "oo_queue.sqf";
+		call compilefinal preprocessFileLineNumbers "oo_hashmap.sqf";
+		call compilefinal preprocessFileLineNumbers "oo_pathfinding.sqf";
 
 	See example mission in directory: init.sqf
 	
@@ -31,8 +38,6 @@
 	You can share, modify, distribute this script but don't remove the licence and the name of the original author
 
 	logs:
-		0.3 - Delete useless functions
-		0.2 - Make arma not war contest
-		0.1 - OO GRID - first release
+		0.1 - OO PATHFINDING - first release
 
 
