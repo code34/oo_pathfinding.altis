@@ -26,13 +26,14 @@
 	
 		PUBLIC FUNCTION("code","constructor") {
 			MEMBER("grid", _this);
+			MEMBER("weightfunction", {1;})
 		};
 
 		PUBLIC FUNCTION("code", "setWeightFunction") {
 			MEMBER("weightfunction", _this);
 		};
 
-		PUBLIC FUNCTION("array", "heuristic") {
+		PRIVATE FUNCTION("array", "heuristic") {
 			private ["_goal", "_next"];
 
 			_goal = _this select 0;
@@ -226,7 +227,6 @@
 			["delete", _weightsofar] call OO_HASHMAP;
 			["delete", _hashmap] call OO_HASHMAP;
 			["delete", _frontier] call OO_QUEUE;
-
 			_path;
 		};		
 
