@@ -22,24 +22,14 @@
 
 	CLASS("OO_PATHFINDING")
 		PRIVATE VARIABLE("code","grid");
+		PRIVATE VARIABLE("code","weightfunction");
 	
-		PUBLIC FUNCTION("string","constructor") {
-			private ["_grid"];
-	
-			_grid = ["new", [31000,31000,100,100]] call OO_GRID;
-
-			MEMBER("grid", _grid);
+		PUBLIC FUNCTION("code","constructor") {
+			MEMBER("grid", _this);
 		};
 
-		PUBLIC FUNCTION("object", "sizeOfRoad") {
-			private ["_br0", "_br1", "_maxwidth", "_maxlength", "_myarea"];
-
-			_br0 = (boundingboxreal _this) select 0;
-			_br1 = (boundingBoxReal _this) select 1;
-			_maxwidth = abs ((_br1 select 0) - (_br0 select 0));
-			_maxlength = abs ((_br1 select 1) - (_br0 select 1));
-			_myarea = floor (_maxwidth * _maxlength);
-			_myarea;
+		PUBLIC FUNCTION("code", "setWeightFunction") {
+			MEMBER("weightfunction", _this);
 		};
 
 		PUBLIC FUNCTION("array", "heuristic") {
@@ -53,7 +43,7 @@
 
 		// Path finding - find the best way between one sector and other
 		PUBLIC FUNCTION("array", "getPath_GreedyBestFirst") {
-			private ["_start", "_end", "_frontier", "_current", "_path", "_grid", "_hashmap", "_position", "_heuristic", "_index", "_value"];
+			private ["_start", "_end", "_frontier", "_current", "_path", "_grid", "_hashmap", "_position", "_heuristic", "_index", "_value", "_size"];
 
 			_start = _this select 0;
 			_end = _this select 1;
@@ -65,6 +55,7 @@
 
 			_start = ["getSectorFromPos", _start] call _grid;
 			_end = ["getSectorFromPos", _end] call _grid;
+			_size = ("getXsectorsize" call _grid) / 2;
 
 			["put", [0, _start]] call _frontier;
 			["put", [str(_start), _start]] call _hashmap;
@@ -72,10 +63,10 @@
 
 			while {!("isEmpty" call _frontier)} do {
 				_current = ["get", ""] call _frontier;
-				_arounds = ["getSectorAround", _current] call _grid;
+				_arounds = ["getSectorsAroundSector", _current] call _grid;
 				{
 					_position = ["getPosFromSector", _x] call _grid;
-					_list = _position nearRoads 50;
+					_list = _position nearRoads _size;
 					if(count _list > 0) then {
 						_result = ["containsKey", str(_x)] call _hashmap;
 						if(!_result)then {
@@ -83,7 +74,7 @@
 							_heuristic = MEMBER("heuristic", _array);
 							["put", [_heuristic, _x]] call _frontier;
 							["put", [str(_x), _current]] call _hashmap;
-							["DrawSector", [_current, str(_heuristic)]] call _grid;
+							//["DrawSector", [_current, str(_heuristic)]] call _grid;
 						};
 					};
 					sleep 0.000001;
@@ -92,19 +83,13 @@
 			};
 
 			_path = [];
-
 			while {!(_current isequalto _start)} do {
-				_path = _path + [_current];
+				_path = _path + [["getPosFromSector", _current] call _grid];
 				_current = ["get", str(_current)] call _hashmap;
 				sleep 0.000001;
 			};
-			_path = _path + [_current];
-
+			_path = _path + [["getPosFromSector", _current] call _grid];
 			reverse _path;
-
-			{
-				["DrawSector2", _x] call _grid;
-			}foreach _path;
 
 			["delete", _hashmap] call OO_HASHMAP;
 			["delete", _frontier] call OO_QUEUE;
@@ -114,45 +99,46 @@
 
 		// Path finding - find the best way between one sector and other
 		PUBLIC FUNCTION("array", "getPath_Dijkstra") {
-			private ["_start", "_end", "_frontier", "_current", "_path", "_grid", "_hashmap", "_position", "_heuristic", "_costsofar", "_newcost", "_result", "_queue"];
+			private ["_start", "_end", "_frontier", "_current", "_path", "_grid", "_hashmap", "_position", "_heuristic", "_weightsofar", "_newweight", "_result", "_queue", "_size"];
 
 			_start = _this select 0;
 			_end = _this select 1;
 
 			_grid = MEMBER("grid", nil);
 			_hashmap = ["new", []] call OO_HASHMAP;
-			_costsofar = ["new", []] call OO_HASHMAP;
+			_weightsofar = ["new", []] call OO_HASHMAP;
 			_frontier = ["new", ""] call OO_QUEUE;
 
 			_start = ["getSectorFromPos", _start] call _grid;
 			_end = ["getSectorFromPos", _end] call _grid;
+			_size = ("getXsectorsize" call _grid) / 2;
 
 			["put", [str(_start), _start]] call _hashmap;
-			["put", [str(_start), 0]] call _costsofar;
+			["put", [str(_start), 0]] call _weightsofar;
 			["put", [0, _start]] call _frontier;
 
 			while {!("isEmpty" call _frontier)} do {
 				_current = ["get", ""] call _frontier;
-				_arounds = ["getSectorAround", _current] call _grid;
+				_arounds = ["getSectorsAroundSector", _current] call _grid;
 				
 				{
 					_position = ["getPosFromSector", _x] call _grid;
-					_list = _position nearRoads 50;
+					_list = _position nearRoads _size;
 					if(count _list > 0) then {
-						_newcost = (["get", str(_current)] call _costsofar) + 1;
+						_newweight = (["get", str(_current)] call _weightsofar) + 1;
 						_result = false;
-						if(["containsKey", str(_x)] call _costsofar) then {
-							if(_newcost < (["get", str(_x)] call _costsofar)) then {
+						if(["containsKey", str(_x)] call _weightsofar) then {
+							if(_newweight < (["get", str(_x)] call _weightsofar)) then {
 								_result = true;
 							};
 						} else {
 							_result = true;
 						};
 						if (_result) then {
-							["put", [str(_x), _newcost]] call _costsofar;
-							["put", [_newcost, _x]] call _frontier;
+							["put", [str(_x), _newweight]] call _weightsofar;
+							["put", [_newweight, _x]] call _frontier;
 							["put", [str(_x), _current]] call _hashmap;
-							["DrawSector", [_current, str(_newcost)]] call _grid;
+							//["DrawSector", [_current, str(_newweight)]] call _grid;
 						};
 					};
 					sleep 0.000001;
@@ -161,21 +147,15 @@
 			};
 
 			_path = [];
-
 			while {!(_current isequalto _start)} do {
-				_path = _path + [_current];
+				_path = _path + [["getPosFromSector", _current] call _grid];
 				_current = ["get", str(_current)] call _hashmap;
 				sleep 0.000001;
 			};
-			_path = _path + [_current];
-
+			_path = _path + [["getPosFromSector", _current] call _grid];
 			reverse _path;
-
-			{
-				["DrawSector2", _x] call _grid;
-			}foreach _path;
 			
-			["delete", _costsofar] call OO_HASHMAP;
+			["delete", _weightsofar] call OO_HASHMAP;
 			["delete", _hashmap] call OO_HASHMAP;
 			["delete", _frontier] call OO_QUEUE;
 
@@ -184,40 +164,36 @@
 
 		// Path finding - find the best way between one sector and other
 		PUBLIC FUNCTION("array", "getPath_A") {
-			private ["_start", "_end", "_frontier", "_current", "_path", "_grid", "_hashmap", "_position", "_heuristic", "_costsofar", "_newcost", "_result", "_queue", "_array", "_heuristic", "_priority", "_size"];
+			private ["_start", "_end", "_frontier", "_current", "_path", "_grid", "_hashmap", "_position", "_heuristic", "_weightsofar", "_newweight", "_result", "_queue", "_array", "_heuristic", "_priority", "_size", "_weight"];
 
 			_start = _this select 0;
 			_end = _this select 1;
 
 			_grid = MEMBER("grid", nil);
 			_hashmap = ["new", []] call OO_HASHMAP;
-			_costsofar = ["new", []] call OO_HASHMAP;
+			_weightsofar = ["new", []] call OO_HASHMAP;
 			_frontier = ["new", ""] call OO_QUEUE;
 
 			_start = ["getSectorFromPos", _start] call _grid;
 			_end = ["getSectorFromPos", _end] call _grid;
+			_size = ("getXsectorsize" call _grid) / 2;
 
 			["put", [str(_start), _start]] call _hashmap;
-			["put", [str(_start), 0]] call _costsofar;
+			["put", [str(_start), 0]] call _weightsofar;
 			["put", [0, _start]] call _frontier;
 
 			while {!("isEmpty" call _frontier)} do {
 				_current = ["get", ""] call _frontier;
-				_arounds = ["getSectorAround", _current] call _grid;
+				_arounds = ["getSectorsAroundSector", _current] call _grid;
 				
 				{
 					_position = ["getPosFromSector", _x] call _grid;
-					_list = _position nearRoads 55;
-					if(count _list > 0) then {
-						_size = MEMBER("sizeOfRoad", _list select 0);
-						if(_size > 400) then {
-							_newcost = (["get", str(_current)] call _costsofar) + 1;
-						} else {
-							_newcost = (["get", str(_current)] call _costsofar) + 2;
-						};
+					_weight = [_position, _size ] call MEMBER("weightfunction", nil);
+					if(_weight > 0) then {
+						_newweight = (["get", str(_current)] call _weightsofar) + _weight;
 						_result = false;
-						if(["containsKey", str(_x)] call _costsofar) then {
-							if(_newcost < (["get", str(_x)] call _costsofar)) then {
+						if(["containsKey", str(_x)] call _weightsofar) then {
+							if(_newweight < (["get", str(_x)] call _weightsofar)) then {
 								_result = true;
 							};
 						} else {
@@ -226,11 +202,11 @@
 						if (_result) then {
 							_array = [_x, _end];
 							_heuristic = MEMBER("heuristic", _array);
-							_priority = _newcost + _heuristic;						
-							["put", [str(_x), _newcost]] call _costsofar;
+							_priority = _newweight + _heuristic;						
+							["put", [str(_x), _newweight]] call _weightsofar;
 							["put", [_priority, _x]] call _frontier;
 							["put", [str(_x), _current]] call _hashmap;
-							["DrawSector", [_current, str(_newcost)]] call _grid;
+							//["DrawSector", [_current, str(_priority)]] call _grid;
 						};
 					};
 					sleep 0.000001;
@@ -239,28 +215,23 @@
 			};
 
 			_path = [];
-
 			while {!(_current isequalto _start)} do {
-				_path = _path + [_current];
+				_path = _path + [["getPosFromSector", _current] call _grid];
 				_current = ["get", str(_current)] call _hashmap;
 				sleep 0.000001;
 			};
-			_path = _path + [_current];
-
+			_path = _path + [["getPosFromSector", _current] call _grid];
 			reverse _path;
-
-			{
-				["DrawSector2", _x] call _grid;
-			}foreach _path;
 			
-			["delete", _costsofar] call OO_HASHMAP;
+			["delete", _weightsofar] call OO_HASHMAP;
 			["delete", _hashmap] call OO_HASHMAP;
 			["delete", _frontier] call OO_QUEUE;
 
 			_path;
-		};
+		};		
 
 		PUBLIC FUNCTION("","deconstructor") { 
 			DELETE_VARIABLE("grid");
+			DELETE_VARIABLE("weightfunction");
 		};
 	ENDCLASS;
