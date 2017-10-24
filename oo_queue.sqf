@@ -1,6 +1,6 @@
 	/*
 	Author: code34 nicolas_boiteux@yahoo.fr
-	Copyright (C) 2016 Nicolas BOITEUX
+	Copyright (C) 2016-2018 Nicolas BOITEUX
 
 	CLASS OO_QUEUE
 	
@@ -57,8 +57,7 @@
 		Return : nothing
 		*/
 		PUBLIC FUNCTION("", "clearQueue") {
-			_array = [];
-			MEMBER("queue", _array);
+			MEMBER("queue", []);
 		};
 
 		/*
@@ -75,10 +74,10 @@
 		Return : default return value
 		*/
 		PUBLIC FUNCTION("ANY", "get") {
-			private ["_index", "_result", "_defaultreturn", "_array"];
+			private ["_index", "_result", "_array"];
 			
 			if(isnil "_this") exitwith { diag_log "OO_QUEUE: getNextPrior requires a return default value";};
-			_defaultreturn = _this;
+			_result = _this;
 
 			{
 				scopeName "oo_queue";
@@ -90,11 +89,9 @@
 				};
 				sleep 0.0001;
 			} foreach MEMBER("queue", nil);
-			if(isnil "_index") then {
-				_result = _defaultreturn;
-			} else {
-				_array = [_index, _defaultreturn];
-				_result = MEMBER("getInQueue", _array);
+			if!(isNil "_index") then { 
+				_array = [_index, _result];
+				_result = MEMBER("getInQueue", _array); 
 			};
 			_result;
 		};
@@ -107,18 +104,12 @@
 		 Return : default return
 		*/
 		PRIVATE FUNCTION("array","getInQueue") {
-			private ["_array", "_queue", "_queueid", "_element", "_defaultreturn"];
-
+			private ["_queue", "_queueid", "_element"];
 			_queueid = _this select 0;
-			_defaultreturn = _this select 1;
+			_element = _this select 1;
 
 			_queue = MEMBER("queue", nil) select _queueid;
-
-			_element = _defaultreturn;
-			if(count(_queue) > 0) then {
-				_element = _queue deleteat 0;
-			};
-			
+			if(count(_queue) > 0) then { _element = _queue deleteat 0; };		
 			MEMBER("queue", nil) set [_queueid, _queue];
 			_element;
 		};
@@ -135,17 +126,15 @@
 			_queueid = _this select 0;
 			_element = _this select 1;
 
-			if(typename _queueid != "SCALAR") exitwith {false;};
+			if!(_queueid isEqualType 0) exitwith {false;};
 
 			if (count MEMBER("queue", nil)  < _queueid) then {
 				_queue = [];
 			} else {
 				_queue = MEMBER("queue", nil)  select _queueid;
-				if(isnil "_queue") then {
-					_queue = [];
-				};
+				if(isnil "_queue") then { _queue = []; };
 			};			
-			_queue = _queue + [_element];
+			_queue pushBack _element;
 
 			MEMBER("queue", nil) set [_queueid, _queue];
 			true;
