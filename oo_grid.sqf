@@ -27,6 +27,8 @@
 		PRIVATE VARIABLE("scalar","ygridsize");
 		PRIVATE VARIABLE("scalar","xsectorsize");
 		PRIVATE VARIABLE("scalar","ysectorsize");
+		PRIVATE VARIABLE("scalar","markerindex");
+		PRIVATE VARIABLE("array","gridmarker");		
 
 		/*
 		Create a new grid object
@@ -46,6 +48,8 @@
 			MEMBER("ygridsize", _this select 3);
 			MEMBER("xsectorsize", _this select 4);
 			MEMBER("ysectorsize", _this select 5);
+			MEMBER("markerindex", 0);
+			MEMBER("gridmarker", []);
 		};
 
 		PUBLIC FUNCTION("scalar","setXgrid") {
@@ -78,6 +82,32 @@
 		PUBLIC FUNCTION("","getYgridsize") FUNC_GETVAR("ygridsize");
 		PUBLIC FUNCTION("","getXsectorsize") FUNC_GETVAR("xsectorsize");
 		PUBLIC FUNCTION("","getYsectorsize") FUNC_GETVAR("ysectorsize");
+
+
+		PUBLIC FUNCTION("array", "DrawSector") {
+			private ["_index", "_gridmarker", "_marker", "_sector", "_text"];
+
+			_sector = _this  select 0;
+			_text = _this select 1;
+
+			_index = MEMBER("markerindex", nil);
+			_gridmarker = MEMBER("gridmarker", nil);
+
+			_position = MEMBER("getPosFromSector", _sector);
+
+			_marker = createMarker [format["mrk_text_%1", _index], _position];
+			_marker setMarkerShape "ICON";
+			_marker setMarkerType "mil_triangle";
+			_marker setmarkerbrush "Solid";
+			_marker setmarkercolor "ColorBlack";
+			_marker setmarkersize [0.5,0.5];
+			_marker setmarkertext format["%1", _text];
+			_gridmarker = _gridmarker + [_marker];
+		
+			_index = _index + 1;
+			MEMBER("gridmarker", _gridmarker);
+			MEMBER("markerindex", _index);
+		};
 
 		/* 
 		Call a loopback parsing function and return sectors that are concerned
