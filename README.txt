@@ -1,6 +1,6 @@
 	/*
 	Author: code34 nicolas_boiteux@yahoo.fr
-	Copyright (C) 2016 Nicolas BOITEUX
+	Copyright (C) 2016-2018 Nicolas BOITEUX
 
 	CLASS OO_PATHFIND - PATHFINDING CLASS
 	
@@ -38,6 +38,7 @@
 	You can share, modify, distribute this script but don't remove the licence and the name of the original author
 
 	logs:
+		0.2 - improve performance with last upgrade
 		0.1 - OO PATHFINDING - first release
 
 
