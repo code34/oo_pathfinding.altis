@@ -1,6 +1,6 @@
 	/*
 	Author: code34 nicolas_boiteux@yahoo.fr
-	Copyright (C) 2014-2016 Nicolas BOITEUX
+	Copyright (C) 2014-2018 Nicolas BOITEUX
 
 	CLASS OO_GRID STRATEGIC GRID
 	
@@ -86,14 +86,13 @@
 			_this : function name - string
 		*/ 
 		PUBLIC FUNCTION("string", "parseAllSectors") {
-			private["_array", "_position", "_sector", "_x", "_y"];
+			private["_array", "_sector", "_x", "_y"];
 
 			_array = [];
 
 			for "_y" from MEMBER("ygrid", nil) to MEMBER("ygridsize", nil) step MEMBER("ysectorsize", nil) do {
 				for "_x" from MEMBER("xgrid", nil) to MEMBER("xgridsize", nil) step MEMBER("xsectorsize", nil) do {
-					_position = [_x, _y];
-					_sector = MEMBER("getSectorFromPos", _position);
+					_sector = MEMBER("getSectorFromPos", [_x, _y]);
 					if(MEMBER(_this, _sector)) then {
 						_array pushback _sector;
 					};
@@ -276,9 +275,7 @@
 		Return : boolean
 		*/	
 		PUBLIC FUNCTION("array", "hasBuildingsAtPos") {
-			private ["_positions"];
-			_positions = MEMBER("getPositionsBuilding", _this);
-			if (count _positions > 10) then { true;} else { false;};
+			if(count MEMBER("getPositionsBuilding", _this) > 10) then { true;} else { false;};
 		};
 
 
@@ -294,11 +291,11 @@
 			
 			if!(surfaceIsWater _this) then {
 				_buildings = nearestObjects[_this,["House_F"], MEMBER("xsectorsize", nil)];
-	
+				sleep 0.5;
 				{
 					_index = 0;
 					while { format ["%1", _x buildingPos _index] != "[0,0,0]" } do {
-						_positions = _positions + [(_x buildingPos _index)];
+						_positions pushBack (_x buildingPos _index);
 						_index = _index + 1;
 						sleep 0.0001;
 					};
