@@ -75,7 +75,7 @@
 							_heuristic = MEMBER("heuristic", _array);
 							["put", [_heuristic, _x]] call _frontier;
 							["put", [str(_x), _current]] call _hashmap;
-							//["DrawSector", [_current, str(_heuristic)]] call _grid;
+							["DrawSector", [_current, str(_heuristic)]] call _grid;
 						};
 					};
 					sleep 0.000001;
@@ -85,11 +85,11 @@
 
 			_path = [];
 			while {!(_current isequalto _start)} do {
-				_path = _path + [["getPosFromSector", _current] call _grid];
+				_path pushBack (["getPosFromSector", _current] call _grid);
 				_current = ["get", str(_current)] call _hashmap;
 				sleep 0.000001;
 			};
-			_path = _path + [["getPosFromSector", _current] call _grid];
+			_path pushBack (["getPosFromSector", _current] call _grid);
 			reverse _path;
 
 			["delete", _hashmap] call OO_HASHMAP;
@@ -139,7 +139,7 @@
 							["put", [str(_x), _newweight]] call _weightsofar;
 							["put", [_newweight, _x]] call _frontier;
 							["put", [str(_x), _current]] call _hashmap;
-							//["DrawSector", [_current, str(_newweight)]] call _grid;
+							["DrawSector", [_current, str(_newweight)]] call _grid;
 						};
 					};
 					sleep 0.000001;
@@ -149,11 +149,11 @@
 
 			_path = [];
 			while {!(_current isequalto _start)} do {
-				_path = _path + [["getPosFromSector", _current] call _grid];
+				_path pushBack (["getPosFromSector", _current] call _grid);
 				_current = ["get", str(_current)] call _hashmap;
 				sleep 0.000001;
 			};
-			_path = _path + [["getPosFromSector", _current] call _grid];
+			_path pushBack (["getPosFromSector", _current] call _grid);
 			reverse _path;
 			
 			["delete", _weightsofar] call OO_HASHMAP;
@@ -207,7 +207,7 @@
 							["put", [str(_x), _newweight]] call _weightsofar;
 							["put", [_priority, _x]] call _frontier;
 							["put", [str(_x), _current]] call _hashmap;
-							//["DrawSector", [_current, str(_priority)]] call _grid;
+							["DrawSector", [_current, str(_priority)]] call _grid;
 						};
 					};
 					sleep 0.000001;
@@ -217,11 +217,11 @@
 
 			_path = [];
 			while {!(_current isequalto _start)} do {
-				_path = _path + [["getPosFromSector", _current] call _grid];
+				_path pushBack (["getPosFromSector", _current] call _grid);
 				_current = ["get", str(_current)] call _hashmap;
 				sleep 0.000001;
 			};
-			_path = _path + [["getPosFromSector", _current] call _grid];
+			_path pushBack (["getPosFromSector", _current] call _grid);
 			reverse _path;
 			
 			["delete", _weightsofar] call OO_HASHMAP;
