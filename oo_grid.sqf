@@ -49,8 +49,7 @@
 			MEMBER("xsectorsize", _this select 4);
 			MEMBER("ysectorsize", _this select 5);
 			MEMBER("markerindex", 0);
-			MEMBER("gridmarker", []);
-		};
+			MEMBER("gridmarker", []);		};
 
 		PUBLIC FUNCTION("scalar","setXgrid") {
 			MEMBER("xgrid", _this);
@@ -116,9 +115,10 @@
 			_this : function name - string
 		*/ 
 		PUBLIC FUNCTION("string", "parseAllSectors") {
-			private["_array", "_sector", "_x", "_y"];
-
-			_array = [];
+			private _x = 0;
+			private _y = 0;
+			private _sector = [];
+			private _array = [];
 
 			for "_y" from MEMBER("ygrid", nil) to MEMBER("ygridsize", nil) step MEMBER("ysectorsize", nil) do {
 				for "_x" from MEMBER("xgrid", nil) to MEMBER("xgridsize", nil) step MEMBER("xsectorsize", nil) do {
@@ -141,9 +141,7 @@
 		Return : array of sectors
 		*/
 		PUBLIC FUNCTION("array", "parseSectors") {
-			private ["_result"];
-
-			_result = [];
+			private _result = [];
 			{
 				if(MEMBER((_this select 1), _x)) then {
 					_result pushback _x;
@@ -159,11 +157,8 @@
 		Return : sector : array
 		*/
 		PUBLIC FUNCTION("array", "getSectorFromPos") {
-			private ["_xpos", "_ypos"];
-
-			_xpos = floor(((_this select 0) - MEMBER("xgrid",nil)) / MEMBER("xsectorsize", nil));
-			_ypos = floor(((_this select 1) - MEMBER("ygrid",nil)) / MEMBER("ysectorsize", nil));
-
+			private _xpos = floor(((_this select 0) - MEMBER("xgrid",nil)) / MEMBER("xsectorsize", nil));
+			private _ypos = floor(((_this select 1) - MEMBER("ygrid",nil)) / MEMBER("ysectorsize", nil));
 			[_xpos, _ypos];
 		};
 
@@ -173,11 +168,8 @@
 		Return : array position
 		*/
 		PUBLIC FUNCTION("array", "getPosFromSector") {		
-			private ["_x", "_y"];
-
-			_x = ((_this select 0) * MEMBER("xsectorsize", nil)) + (MEMBER("xsectorsize", nil) / 2) + MEMBER("xgrid", nil);
-			_y = ((_this select 1) * MEMBER("ysectorsize", nil)) + (MEMBER("ysectorsize", nil) / 2)+ MEMBER("ygrid", nil);;
-
+			private _x = ((_this select 0) * MEMBER("xsectorsize", nil)) + (MEMBER("xsectorsize", nil) / 2) + MEMBER("xgrid", nil);
+			private _y = ((_this select 1) * MEMBER("ysectorsize", nil)) + (MEMBER("ysectorsize", nil) / 2)+ MEMBER("ygrid", nil);;
 			[_x,_y];
 		};		
 
@@ -196,9 +188,7 @@
 		Return : array containing all sectors
 		*/		
 		PUBLIC FUNCTION("array", "getSectorsAroundSector") {
-			private ["_grid"];
-
-			_grid = [
+			private _grid = [
 				[(_this select 0) -1, (_this select 1) - 1],
 				[(_this select 0), (_this select 1) - 1],
 				[(_this select 0) + 1, (_this select 1) -1],
@@ -228,9 +218,7 @@
 		Return : array containing all sectors
 		*/
 		PUBLIC FUNCTION("array", "getSectorsCrossAroundSector") {
-			private ["_grid"];
-
-			_grid = [
+			private _grid = [
 				[(_this select 0), (_this select 1) - 1],
 				[(_this select 0)-1, (_this select 1)],
 				[(_this select 0)+1, (_this select 1)],
@@ -257,14 +245,13 @@
 		Return : array containing all sectors
 		*/
 		PUBLIC FUNCTION("array", "getAllSectorsAroundSector") {
-			private ["_grid", "_botx", "_boty", "_topx", "_topy", "_x", "_y"];
-
-			_botx = ((_this select 0) select 0) - (_this select 1);
-			_boty = ((_this select 0) select 1) - (_this select 1);
-			_topx = ((_this select 0) select 0) + (_this select 1);
-			_topy = ((_this select 0) select 1) + (_this select 1);
-
-			_grid = [];
+			private _botx = ((_this select 0) select 0) - (_this select 1);
+			private _boty = ((_this select 0) select 1) - (_this select 1);
+			private _topx = ((_this select 0) select 0) + (_this select 1);
+			private _topy = ((_this select 0) select 1) + (_this select 1);
+			private _grid = [];
+			private _x = 0;
+			private _y = 0;
 			
 			for "_y" from _boty to _topy do {
 				for "_x" from _botx to _topx do {
@@ -283,8 +270,7 @@
 		Return : array containing all sectors
 		*/
 		PUBLIC FUNCTION("array", "getAllSectorsAroundPos") {
-			private ["_array"];
-			_array = [MEMBER("getSectorFromPos", _this select 0), _this select 1];
+			private _array = [MEMBER("getSectorFromPos", _this select 0), _this select 1];
 			MEMBER("getAllSectorsAroundSector", _array);
 		};
 
@@ -294,8 +280,7 @@
 		Return : boolean
 		*/		
 		PUBLIC FUNCTION("array", "hasBuildingsAtSector") {
-			private ["_positions"];
-			_positions = MEMBER("getPositionsBuilding", MEMBER("getPosFromSector", _this));
+			private _positions = MEMBER("getPositionsBuilding", MEMBER("getPosFromSector", _this));
 			if (count _positions > 10) then { true;} else { false;};
 		};
 
@@ -315,16 +300,16 @@
 		Return : array containing all positions in building
 		*/
 		PUBLIC FUNCTION("array", "getPositionsBuilding") {
-			private ["_index", "_buildings", "_positions"];
-
-			_positions = [];
+			private _positions = [];
+			private _buildings = [];
+			private _index = 0;
 			
 			if!(surfaceIsWater _this) then {
 				_buildings = nearestObjects[_this,["House_F"], MEMBER("xsectorsize", nil)];
 				sleep 0.5;
 				{
 					_index = 0;
-					while { format ["%1", _x buildingPos _index] != "[0,0,0]" } do {
+					while { !(format ["%1", _x buildingPos _index] isEqualTo "[0,0,0]") } do {
 						_positions pushBack (_x buildingPos _index);
 						_index = _index + 1;
 						sleep 0.0001;
@@ -334,6 +319,17 @@
 			};
 			_positions;
 		};
+
+		// Check distance cost between tow sectors
+		PUBLIC FUNCTION("array", "GetEstimateCost") {
+			private _start = _this select 0;	
+			private _goal = _this select 1;
+
+			private _dx = abs((_start select 0) - (_goal select 0));
+			private _dy = abs((_start select 1) - (_goal select 1));
+
+			_dy max _dx;
+		};	
 
 		PUBLIC FUNCTION("","deconstructor") { 
 			DELETE_VARIABLE("xgrid");
