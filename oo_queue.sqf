@@ -24,7 +24,7 @@
 		PRIVATE VARIABLE("array","queue");
 
 		PUBLIC FUNCTION("string","constructor") { 
-			MEMBER("clearQueue", nil);
+			MEMBER("queue", []);
 		};
 
 		/*
@@ -40,13 +40,9 @@
 		Return : scalar
 		*/
 		PUBLIC FUNCTION("", "count") {
-			private ["_count"];
-
-			_count = 0;
+			private _count = 0;
 			{
-				if!(isnil "_x") then {
-					_count = _count + count(_x);
-				};
+				if!(isnil "_x") then { _count = _count + count(_x); };
 				sleep 0.0001;
 			} foreach MEMBER("queue", nil);
 			_count;
@@ -74,10 +70,10 @@
 		Return : default return value
 		*/
 		PUBLIC FUNCTION("ANY", "get") {
-			private ["_index", "_result", "_array"];
-			
 			if(isnil "_this") exitwith { diag_log "OO_QUEUE: getNextPrior requires a return default value";};
-			_result = _this;
+			private _result = _this;
+			private _index = nil;
+			private _array = [];
 
 			{
 				scopeName "oo_queue";
@@ -89,9 +85,9 @@
 				};
 				sleep 0.0001;
 			} foreach MEMBER("queue", nil);
-			if!(isNil "_index") then { 
+			if!(isnil "_index") then {
 				_array = [_index, _result];
-				_result = MEMBER("getInQueue", _array); 
+				_result = MEMBER("getInQueue", _array);
 			};
 			_result;
 		};
@@ -104,12 +100,10 @@
 		 Return : default return
 		*/
 		PRIVATE FUNCTION("array","getInQueue") {
-			private ["_queue", "_queueid", "_element"];
-			_queueid = _this select 0;
-			_element = _this select 1;
-
-			_queue = MEMBER("queue", nil) select _queueid;
-			if(count(_queue) > 0) then { _element = _queue deleteat 0; };		
+			private _queueid = _this select 0;
+			private _element = _this select 1;
+			private _queue = MEMBER("queue", nil) select _queueid;
+			if(count(_queue) > 0) then {_element = _queue deleteat 0; };		
 			MEMBER("queue", nil) set [_queueid, _queue];
 			_element;
 		};
@@ -121,21 +115,15 @@
 		 	2 - Element to insert in the queue
 		*/
 		PUBLIC FUNCTION("array","put") {
-			private ["_queueid", "_element", "_queue"];
-			
-			_queueid = _this select 0;
-			_element = _this select 1;
-
-			if!(_queueid isEqualType 0) exitwith {false;};
-
-			if (count MEMBER("queue", nil)  < _queueid) then {
-				_queue = [];
-			} else {
+			private _queueid = _this select 0;
+			private _element = _this select 1;
+			private _queue = [];
+			if!(_queueid isEqualType 0) exitwith {false;};	
+			if (count MEMBER("queue", nil)  >= _queueid) then { 
 				_queue = MEMBER("queue", nil)  select _queueid;
 				if(isnil "_queue") then { _queue = []; };
 			};			
 			_queue pushBack _element;
-
 			MEMBER("queue", nil) set [_queueid, _queue];
 			true;
 		};
