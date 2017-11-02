@@ -27,10 +27,10 @@
 		put the "oo_queue.sqf" in your mission directory
 		put this code into your mission init.sqf
 
-		call compilefinal preprocessFileLineNumbers "oo_grid.sqf";
-		call compilefinal preprocessFileLineNumbers "oo_queue.sqf";
-		call compilefinal preprocessFileLineNumbers "oo_hashmap.sqf";
-		call compilefinal preprocessFileLineNumbers "oo_pathfinding.sqf";
+		call compile preprocessFileLineNumbers "oo_grid.sqf";
+		call compile preprocessFileLineNumbers "oo_queue.sqf";
+		call compile preprocessFileLineNumbers "oo_hashmap.sqf";
+		call compile preprocessFileLineNumbers "oo_pathfinding.sqf";
 
 	See example mission in directory: init.sqf
 	
