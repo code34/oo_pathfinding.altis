@@ -22,8 +22,8 @@
 
 	CLASS("OO_QUEUE")
 		PRIVATE VARIABLE("array","queue");
-
 		PUBLIC FUNCTION("string","constructor") { 
+			DEBUG(#, "OO_QUEUE::constructor")
 			MEMBER("queue", []);
 		};
 
@@ -31,15 +31,14 @@
 		Return an array containing all the elements of the queue
 		Return : array
 		*/
-		PUBLIC FUNCTION("", "toArray") {
-			MEMBER("queue", nil);
-		};
+		PUBLIC FUNCTION("", "toArray") FUNC_GETVAR("queue");
 
 		/*
 		Count the number of elements in the Queue
 		Return : scalar
 		*/
 		PUBLIC FUNCTION("", "count") {
+			DEBUG(#, "OO_QUEUE::count")
 			private _count = 0;
 			{
 				if!(isnil "_x") then { _count = _count + count(_x); };
@@ -53,6 +52,7 @@
 		Return : nothing
 		*/
 		PUBLIC FUNCTION("", "clearQueue") {
+			DEBUG(#, "OO_QUEUE::clearQueue")
 			MEMBER("queue", []);
 		};
 
@@ -61,6 +61,7 @@
 		Return : boolean 
 		*/
 		PUBLIC FUNCTION("", "isEmpty") {
+			DEBUG(#, "OO_QUEUE::isEmpty")
 			if(MEMBER("count", nil) > 0) then { false; } else { true;};
 		};
 
@@ -70,6 +71,7 @@
 		Return : default return value
 		*/
 		PUBLIC FUNCTION("ANY", "get") {
+			DEBUG(#, "OO_QUEUE::get")
 			if(isnil "_this") exitwith { diag_log "OO_QUEUE: getNextPrior requires a return default value";};
 			private _result = _this;
 			private _index = nil;
@@ -100,6 +102,7 @@
 		 Return : default return
 		*/
 		PRIVATE FUNCTION("array","getInQueue") {
+			DEBUG(#, "OO_QUEUE::getInQueue")
 			private _queueid = _this select 0;
 			private _element = _this select 1;
 			private _queue = MEMBER("queue", nil) select _queueid;
@@ -115,6 +118,7 @@
 		 	2 - Element to insert in the queue
 		*/
 		PUBLIC FUNCTION("array","put") {
+			DEBUG(#, "OO_QUEUE::put")
 			private _queueid = _this select 0;
 			private _element = _this select 1;
 			private _queue = [];
@@ -129,6 +133,7 @@
 		};
 
 		PUBLIC FUNCTION("","deconstructor") { 
+			DEBUG(#, "OO_QUEUE::deconstructor")
 			DELETE_VARIABLE("queue");
 		};
 	ENDCLASS;

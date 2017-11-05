@@ -26,6 +26,7 @@
 		PRIVATE VARIABLE("scalar","keyid");
 
 		PUBLIC FUNCTION("array","constructor") {
+			DEBUG(#, "OO_HASHMAP::constructor")
 			MEMBER("index",  []);
 			private _instanceid = MEMBER("instanceid",nil);
 			if (isNil "_instanceid") then {_instanceid = 0;};
@@ -36,6 +37,7 @@
 
 		// Removes all of the mappings from this map.
 		PUBLIC FUNCTION("", "clear") {
+			DEBUG(#, "OO_HASHMAP::clear")
 			private _hash = "";
 			{
 				_hash = MEMBER("keyName", _x);
@@ -45,11 +47,13 @@
 		};		
 
 		PUBLIC FUNCTION("string", "keyName") {
+			DEBUG(#, "OO_HASHMAP::keyName")
 			"HSHKEY"+ str(MEMBER("keyid", nil)) + "_" + _this;
 		};
 
 		// Returns true if this map contains a mapping for the specified key.
 		PUBLIC FUNCTION("string", "containsKey") {
+			DEBUG(#, "OO_HASHMAP::containsKey")
 			private _hash = MEMBER("keyName", _this);
 			private _set = missionNamespace getVariable _hash;
 			if(isnil "_set") then {false;} else {true;};
@@ -57,6 +61,7 @@
 
 		// Returns true if this map contains a mapping for the specified value
 		PUBLIC FUNCTION("array", "containsValue") {
+			DEBUG(#, "OO_HASHMAP::containsValue")
 			private _search = _this select 0;
 			private _return = false;
 			{
@@ -67,6 +72,7 @@
 
 		// Returns a set view of the mappings contained in this map.
 		PUBLIC FUNCTION("","entrySet"){
+			DEBUG(#, "OO_HASHMAP::entrySet")
 			private _array = [];
 			{
 				_array pushBack MEMBER("get", _x);
@@ -76,12 +82,14 @@
 
 		// Returns the value to which the specified key is mapped, or null if this map contains no mapping for the key.
 		PUBLIC FUNCTION("string", "get") {
+			DEBUG(#, "OO_HASHMAP::get")
 			if((isnil "_this") or !(_this isEqualType "")) exitwith {false};
 			missionNamespace getVariable MEMBER("keyName", _this);
 		};
 
 		// Returns true if this map contains no key-value mappings.
 		PUBLIC FUNCTION("", "isEmpty") {
+			DEBUG(#, "OO_HASHMAP::isEmpty")
 			if(count MEMBER("index", nil) == 0) then { true; } else { false };
 		};
 
@@ -90,6 +98,7 @@
 
 		// Associates the specified value with the specified key in this map.
 		PUBLIC FUNCTION("array", "put") {
+			DEBUG(#, "OO_HASHMAP::put")
 			private _key = (_this select 0);			
 			if((isnil "_key") or !(_key isEqualType "")) exitwith {false};
 			
@@ -103,6 +112,7 @@
 
 		// Removes the mapping for the specified key from this map if present.
 		PUBLIC FUNCTION("string", "remove") {
+			DEBUG(#, "OO_HASHMAP::remove")
 			if(isnil "_this") exitwith {false};
 			private _key = _this;
 			private _hash = MEMBER("keyName", _key);
@@ -113,10 +123,12 @@
 
 		// Returns the number of key-value mappings in this map
 		PUBLIC FUNCTION("", "size") {
+			DEBUG(#, "OO_HASHMAP::size")
 			count MEMBER("index", nil);
 		};
 
 		PUBLIC FUNCTION("","deconstructor") { 
+			DEBUG(#, "OO_HASHMAP::deconstructor")
 			DELETE_VARIABLE("index");
 			DELETE_VARIABLE("keyid");
 		};
