@@ -3,7 +3,7 @@
 		call compile preprocessFileLineNumbers "oo_hashmap.sqf";
 		call compile preprocessFileLineNumbers "oo_pathfinding.sqf";
 
-
+		sleep 14;
 		// Initialize a virtual grid over the map
 		private _grid = ["new", [0,0,31000,31000,100,100]] call OO_GRID;
 		private _path = ["new", _grid] call OO_PATHFINDING;
