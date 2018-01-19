@@ -38,6 +38,7 @@
 	You can share, modify, distribute this script but don't remove the licence and the name of the original author
 
 	logs:
+		0.4 - add new oo_queue
 		0.3 - add new grid/hashmap/queue object
 		0.2 - improve performance with last upgrade
 		0.1 - OO PATHFINDING - first release
