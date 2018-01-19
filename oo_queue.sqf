@@ -22,16 +22,23 @@
 
 	CLASS("OO_QUEUE")
 		PRIVATE VARIABLE("array","queue");
+		PRIVATE VARIABLE("scalar","counter");
+		
 		PUBLIC FUNCTION("string","constructor") { 
 			DEBUG(#, "OO_QUEUE::constructor")
 			MEMBER("queue", []);
+			MEMBER("counter", 0);
 		};
 
 		/*
 		Return an array containing all the elements of the queue
 		Return : array
 		*/
-		PUBLIC FUNCTION("", "toArray") FUNC_GETVAR("queue");
+		PUBLIC FUNCTION("", "toArray") {
+			private _array = [];
+			{ _array pushBack (_x select 2); true; } count MEMBER("queue", nil);
+			_array;
+		};
 
 		/*
 		Count the number of elements in the Queue
@@ -39,12 +46,7 @@
 		*/
 		PUBLIC FUNCTION("", "count") {
 			DEBUG(#, "OO_QUEUE::count")
-			private _count = 0;
-			{
-				if!(isnil "_x") then { _count = _count + count(_x); };
-				sleep 0.0001;
-			} foreach MEMBER("queue", nil);
-			_count;
+			count MEMBER("queue", nil);
 		};
 
 		/*
@@ -54,6 +56,7 @@
 		PUBLIC FUNCTION("", "clearQueue") {
 			DEBUG(#, "OO_QUEUE::clearQueue")
 			MEMBER("queue", []);
+			MEMBER("counter", 0);
 		};
 
 		/*
@@ -70,45 +73,9 @@
 		Param : default return value, if queue is empty
 		Return : default return value
 		*/
-		PUBLIC FUNCTION("ANY", "get") {
+		PUBLIC FUNCTION("", "get") {
 			DEBUG(#, "OO_QUEUE::get")
-			if(isnil "_this") exitwith { diag_log "OO_QUEUE: getNextPrior requires a return default value";};
-			private _result = _this;
-			private _index = nil;
-			private _array = [];
-
-			{
-				scopeName "oo_queue";
-				if!(isnil "_x") then {
-					If(count _x > 0) then {
-						_index = _foreachindex;
-						breakout "oo_queue";
-					};
-				};
-				sleep 0.0001;
-			} foreach MEMBER("queue", nil);
-			if!(isnil "_index") then {
-				_array = [_index, _result];
-				_result = MEMBER("getInQueue", _array);
-			};
-			_result;
-		};
-
-		/*
-		Get the first in element, and remove it, according its priority
-		 params : array 
-		 	1- priority - (0 highest priority)
-		 	2 - default return
-		 Return : default return
-		*/
-		PRIVATE FUNCTION("array","getInQueue") {
-			DEBUG(#, "OO_QUEUE::getInQueue")
-			private _queueid = _this select 0;
-			private _element = _this select 1;
-			private _queue = MEMBER("queue", nil) select _queueid;
-			if(count(_queue) > 0) then {_element = _queue deleteat 0; };		
-			MEMBER("queue", nil) set [_queueid, _queue];
-			_element;
+			(MEMBER("queue", nil) deleteAt 0) select 2;
 		};
 
 		/*
@@ -119,21 +86,15 @@
 		*/
 		PUBLIC FUNCTION("array","put") {
 			DEBUG(#, "OO_QUEUE::put")
-			private _queueid = _this select 0;
-			private _element = _this select 1;
-			private _queue = [];
-			if!(_queueid isEqualType 0) exitwith {false;};	
-			if (count MEMBER("queue", nil)  >= _queueid) then { 
-				_queue = MEMBER("queue", nil)  select _queueid;
-				if(isnil "_queue") then { _queue = []; };
-			};			
-			_queue pushBack _element;
-			MEMBER("queue", nil) set [_queueid, _queue];
-			true;
+			_counter = MEMBER("counter", nil) + 1;
+			MEMBER("counter", _counter);
+			MEMBER("queue", nil) pushBack [_this select 0, _counter, _this select 1];
+			MEMBER("queue", nil) sort true;
 		};
 
 		PUBLIC FUNCTION("","deconstructor") { 
 			DEBUG(#, "OO_QUEUE::deconstructor")
 			DELETE_VARIABLE("queue");
+			DELETE_VARIABLE("counter");
 		};
 	ENDCLASS;

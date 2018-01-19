@@ -63,7 +63,7 @@
 
 
 			while {!("isEmpty" call _frontier)} do {
-				_current = ["get", ""] call _frontier;
+				_current = "get" call _frontier;
 				_arounds = ["getSectorsAroundSector", _current] call _grid;
 				{
 					_position = ["getPosFromSector", _x] call _grid;
@@ -119,7 +119,7 @@
 			["put", [0, _start]] call _frontier;
 
 			while {!("isEmpty" call _frontier)} do {
-				_current = ["get", ""] call _frontier;
+				_current = "get" call _frontier;
 				_arounds = ["getSectorsAroundSector", _current] call _grid;
 				
 				{
@@ -184,7 +184,7 @@
 			["put", [0, _start]] call _frontier;
 
 			while {!("isEmpty" call _frontier)} do {
-				_current = ["get", ""] call _frontier;
+				_current = "get" call _frontier;
 				_arounds = ["getSectorsAroundSector", _current] call _grid;
 				
 				{
